@@ -29,8 +29,10 @@ function App() {
               <div className="container">
                 <Routes >
                   <Route exact path="/" element={<Home/>}> </Route>
-                  <Route exact path="/signup" element={<Signup/>}> </Route>
                   <Route exact path="/login" element={<Login/>}> </Route>
+                  <Route exact path="/signup" element={<Signup/>}> </Route>
+                  <Route exact path="/Main" element={<Main/>}> </Route>
+                  <Route exact path="/Showtask" element={<Showtask/>}> </Route>
                   {/* <Route exact path="/login || /signup" element={<Main/>}> </Route> */}
 
                 </Routes>

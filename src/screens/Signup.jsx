@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Main from './Main';
 
 const Signup = () => {
     const [credentials, setCredentials] = useState({ name: "", email: "", password: "", cpassword: "" });
@@ -107,15 +108,12 @@ const Signup = () => {
                         </div>
                     </div>
                     <div>
-                        <button
-                        <Link
-                        to="/login"
-                            type="submit"
-                            className="flex w-full justify-center rounded-md bg-[#674188] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#5D3891] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        >
-                          <Link></Link>
-                            Sign in
-                        </button>
+                    <Link to="/Main" className="flex w-full justify-center rounded-md bg-[#674188] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#5D3891] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+
+    Sign in
+ 
+</Link>
+
                     </div>
                 </form>
                 <p>Already a user? <Link to="/login">Login</Link></p>

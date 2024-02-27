@@ -4,9 +4,6 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
 import EditIcon from '@mui/icons-material/Edit';
 import Checkbox from '@mui/material/Checkbox';
 
@@ -15,10 +12,8 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const Showtask = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedOption, setSelectedOption] = useState('');
-    const [cardColor, setCardColor] = useState('#ffffff'); // Default color
     const [notes, setNotes] = useState([]);
     const host = "http://localhost:8000"; // Define the host URL of your backend API
-    const options = ['High', 'Moderate', 'Low'];
 
     useEffect(() => {
         const getNotes = async () => {
@@ -28,7 +23,7 @@ const Showtask = () => {
                     method: "GET", 
                     headers: {
                         "Content-Type": "application/json",
-                        "auth-token": localStorage.getItem('token')
+                        "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjVkZDhlNWI5N2ZjMGE4YzA1YzE2MTgxIn0sImlhdCI6MTcwOTAxOTI5M30.TAoTtoKsVGDbhSd6lQ1_SCxLjJKqIR721ZaoJJDtpOU"
                     },
                 });
                 const json = await response.json();
@@ -39,46 +34,32 @@ const Showtask = () => {
             }
         };
         getNotes();
-    }, []); // Run once on component mount
+    }, []);
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
+    const handleOptionClick = async (priority, id, date) => {
+        setSelectedOption(priority);
         setAnchorEl(null);
-    };
-
-    const handleOptionClick = async (option, id) => {
-        setSelectedOption(option);
-        setAnchorEl(null);
-        // Set card color based on selected priority
-        switch (option) {
-            case 'High':
-                setCardColor('#ffcccc'); // Red color
-                break;
-            case 'Moderate':
-                setCardColor('#ffffcc'); // Yellow color
-                break;
-            case 'Low':
-                setCardColor('#ccffcc'); // Green color
-                break;
-            default:
-                setCardColor('#ffffff'); // Default color
-        }
-
+ 
         // Delete the note associated with the checkbox
         await deleteNote(id);
+
+        // Compare the date from the database with today's date
+        const today = new Date();
+        const noteDate = new Date(date);
+        if (isSameDate(today, noteDate)) {
+            // Send SMS if dates match
+            await console.log(isSameDate); // Make a request to your backend to send SMS
+        }
     };
 
     const deleteNote = async (id) => {
         try {
-            // Api call
+            // Api call to delete note
             await fetch(`${host}/api/notes/deletenote/${id}`, {
                 method: "DELETE", 
                 headers: {
                     "Content-Type": "application/json",
-                    "auth-token": localStorage.getItem('token')
+                    "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjVkZDhlNWI5N2ZjMGE4YzA1YzE2MTgxIn0sImlhdCI6MTcwOTAxOTI5M30.TAoTtoKsVGDbhSd6lQ1_SCxLjJKqIR721ZaoJJDtpOU"
                 }
             });
             // Update the notes state after deletion
@@ -89,10 +70,20 @@ const Showtask = () => {
         }
     };
 
+    const isSameDate = (date1, date2) => {
+        return (
+            date1.getFullYear() === date2.getFullYear() &&
+            date1.getMonth() === date2.getMonth() &&
+            date1.getDate() === date2.getDate()
+        );
+    };
+
+
+
     return (
-        <div>
-            {notes.map((note) => (
-                <Card key={note._id} variant="outlined" sx={{ maxWidth: 360, backgroundColor: cardColor }} className='ml-20 mt-12'>
+        <diV className ="flex mx-0">
+            {Array.isArray(notes) && notes.map((note) => (
+                <Card key={note._id} variant="outlined" sx={{ maxWidth: 360, ...getCardColor(note.priority) }} className='ml-20 mt-12'>
                     <Box sx={{ p: 2 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
                             <Typography gutterBottom variant="h5" component="div">
@@ -105,51 +96,37 @@ const Showtask = () => {
                     </Box>
                     <Divider />
                     <Box sx={{ p: 2 }}>
+                    <Typography color="text.secondary" variant="body2">
+                            {note.date}
+                        </Typography>
                         <Typography gutterBottom variant="body2">
                             Select type
                         </Typography>
                         <Stack direction="row" spacing={1} alignItems="center">
                             {/* Checkbox */}
-                            <Checkbox {...label} onClick={() => handleOptionClick(selectedOption, note._id)} />
+                            <Checkbox {...label} onClick={() => handleOptionClick(note.priority, note._id)} />
 
                             {/* Edit icon */}
                             <EditIcon />
-
-                            {/* Dropdown */}
-                            <Button onClick={handleClick} variant="outlined" color="primary">
-                                Select Priority
-                            </Button>
-                            <Menu
-                                id="options-menu"
-                                anchorEl={anchorEl}
-                                open={Boolean(anchorEl)}
-                                onClose={handleClose}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'left',
-                                }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'left',
-                                }}
-                                PaperProps={{
-                                    style: {
-                                        zIndex: 9999,
-                                    },
-                                }}
-                            >
-                                {options.map((option, index) => (
-                                    <MenuItem key={index} onClick={() => handleOptionClick(option, note._id)}>
-                                        {option}
-                                    </MenuItem>
-                                ))}
-                            </Menu>
                         </Stack>
                     </Box>
                 </Card>
             ))}
-        </div>
+        </diV>
     );
+};
+
+const getCardColor = (priority) => {
+    switch (priority) {
+        case 'High':
+            return { bgcolor: '#ffcccc' }; // Red color
+        case 'Moderate':
+            return { bgcolor: '#ffffcc' }; // Yellow color
+        case 'Low':
+            return { bgcolor: '#ccffcc' }; // Green color
+        default:
+            return { bgcolor: '#ffffff' }; // Default color
+    }
 };
 
 export default Showtask;
